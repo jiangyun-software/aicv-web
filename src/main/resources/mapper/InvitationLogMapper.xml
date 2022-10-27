@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jiangyun.aicvweb.dao.InvitationLogMapper">
+
+    <resultMap id="invitationLogResultMap" type="com.jiangyun.aicvweb.entity.InvitationLog">
+        <id property="id" column="id"/>
+        <result property="point" column="point"/>
+        <result property="createTime" column="create_time"/>
+        <association property="member" javaType="com.jiangyun.aicvweb.entity.Member" column="member_id" select="com.jiangyun.aicvweb.dao.MemberMapper.selectMemberById" />
+        <association property="invitationMember" javaType="com.jiangyun.aicvweb.entity.Member" column="invitation_member_id" select="com.jiangyun.aicvweb.dao.MemberMapper.selectMemberById" />
+    </resultMap>
+
+    <sql id="baseSql">
+        select id, member_id, invitation_member_id, `point`create_time from t_web_invitation_log 
+    </sql>
+
+    <insert id="insert" parameterType="com.jiangyun.aicvweb.entity.InvitationLog">
+        insert into t_web_invitation_log (id, member_id, invitation_member_id, `point`) values (#{id}, #{member.id}, #{invitationMember.id}, #{point})
+    </insert>
+
+    <select id="list" resultMap="invitationLogResultMap">
+        <include refid="baseSql"/>
+        where member_id = #{memberId} order by create_time desc
+    </select>
+</mapper>

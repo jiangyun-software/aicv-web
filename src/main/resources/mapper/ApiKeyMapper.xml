@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jiangyun.aicvweb.dao.ApiKeyMapper">
+
+    <resultMap id="apiKeyResultMap" type="com.jiangyun.aicvweb.entity.ApiKey">
+        <id property="id" column="id"/>
+        <result property="memberId" column="member_id"/>
+        <result property="key" column="key"/>
+        <result property="type" column="type"/>
+        <result property="permanent" column="permanent"/>
+        <result property="expirationDate" column="expiration_date"/>
+        <result property="disabled" column="disabled"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="remark" column="remark"/>
+    </resultMap>
+
+    <sql id="baseSql">
+        select id, member_id, `key`, type, permanent, expiration_date, disabled, create_time, update_time, remark from t_web_api_key 
+    </sql>
+
+    <insert id="insert" parameterType="com.jiangyun.aicvweb.entity.ApiKey">
+        insert into t_web_api_key (id, member_id, `key`, type, permanent, expiration_date, remark) values (#{id}, #{memberId}, #{key}, #{type}, #{permanent}, #{expirationDate}, #{remark})
+    </insert>
+    
+    <update id="update">
+        update t_web_api_key set permanent = #{permanent}, expiration_date = #{expirationDate}, disabled = #{disabled}, remark = #{remark}, update_time = sysdate() where id = #{id}
+    </update>
+
+    <select id="list" resultMap="apiKeyResultMap">
+        <include refid="baseSql"/>
+        where member_id = #{memberId} and type = '1' order by create_time desc
+    </select>
+
+    <select id="selectById" resultMap="apiKeyResultMap">
+    	<include refid="baseSql"/>
+        where id = #{id}
+    </select>
+    
+    <delete id="deleteById">
+        delete from t_web_api_key where id = #{id} and type = '1'
+    </delete>
+    
+    <update id="resetPrimaryKey">
+        update t_web_api_key set `key` = #{key} where member_id = #{memberId} and type = '0'
+    </update>
+    
+    <select id="selectPrimaryKey" resultMap="apiKeyResultMap">
+    	<include refid="baseSql"/>
+        where member_id = #{memberId} and type = '0'
+    </select>
+</mapper>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jiangyun.aicvweb.dao.KeywordPaintingMapper">
+
+    <resultMap id="keywordPaintingResultMap" type="com.jiangyun.aicvweb.entity.KeywordPainting">
+        <id property="id" column="id"/>
+        <result property="memberId" column="member_id"/>
+        <result property="image" column="image"/>
+        <result property="params" column="params"/>
+        <result property="download" column="download"/>
+        <result property="createTime" column="create_time"/>
+        <result property="useTime" column="use_time"/>
+        <result property="delFlag" column="del_flag"/>
+        <result property="keyword" column="keyword"/>
+    </resultMap>
+
+    <sql id="baseSql">
+        select id, member_id, image, params, download, create_time, use_time, del_flag, keyword from t_web_api_keywordpainting 
+    </sql>
+
+    <insert id="submit" parameterType="com.jiangyun.aicvweb.entity.KeywordPainting">
+        insert into t_web_api_keywordpainting id, member_id, params, keyword values (#{id}, #{member.id}, #{params}, #{keyword})
+    </insert>
+
+    <select id="history" resultMap="keywordPaintingResultMap">
+        <include refid="baseSql"/>
+        where member_id = #{memberId}
+    </select>
+    
+    <select id="selectById" resultMap="keywordPaintingResultMap">
+        <include refid="baseSql"/>
+        where id = {id}
+    </select>
+    
+    <delete id="delete">
+    	delete from t_web_api_keywordpainting where id = #{id} and member_id = #{memberId}
+    </delete>
+    
+    <update id="download">
+    	update t_web_api_keywordpainting set download = 1 where id = #{id}
+    </update>
+
+</mapper>

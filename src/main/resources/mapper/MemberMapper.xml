@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jiangyun.aicvweb.dao.MemberMapper">
+
+    <resultMap id="memberResultMap" type="com.jiangyun.aicvweb.entity.Member">
+        <id property="id" column="id"/>
+        <result property="phonenumber" column="phonenumber"/>
+        <result property="password" column="password"/>
+        <result property="status" column="status"/>
+        <result property="createTime" column="create_time"/>
+        <result property="openid" column="openid"/>
+        <result property="point" column="point"/>
+        <result property="wechatInfo" column="wechat_info"/>
+        <result property="initPassword" column="initPassword"/>
+        <result property="invitationCode" column="invitation_code"/>
+    </resultMap>
+
+    <sql id="baseSql">
+        select id, phonenumber, password, disabled, create_time, openid, point, wechat_info, LENGTH(password) > 0 initPassword, invitation_code from t_web_member 
+    </sql>
+
+    <!-- 新增用户 -->
+    <insert id="save" parameterType="com.jiangyun.aicvweb.entity.Member">
+        insert into t_web_member
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+        	id,
+        	invitation_code,
+            <if test="phonenumber != null and phonenumber != ''">phonenumber,</if>
+            <if test="password != null and password != ''">password,</if>
+            <if test="openid != null and openid != ''">openid,</if>
+            <if test="initPassword">init_password,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+        	#{id},
+        	#{invitationCode}
+            <if test="phonenumber != null and phonenumber != ''">#{phonenumber},</if>
+            <if test="password != null and password != ''">#{password},</if>
+            <if test="openid != null and openid != ''">#{openid},</if>
+            <if test="initPassword">#{initPassword},</if>
+         </trim>
+    </insert>
+    
+    <!-- 绑定微信 -->
+    <update id="bindWechat">
+        update t_web_member set openid = #{openid} where id = #{id}
+    </update>
+    
+    <!-- 启用禁用 -->
+    <update id="disabled">
+        update t_web_member set disabled = #{disabled} where id = #{id}
+    </update>
+
+    <!-- 查询用户列表 -->
+    <select id="selectMemberList" resultMap="memberResultMap">
+        <include refid="baseSql"/>
+        <where>
+        	<if test="phonenumber != null and phonenumber != ''">
+        		phonenumber like concat('%', #{phonenumber}, '%')
+        	</if>
+        	<if test="disabled != null">
+        		disabled = #{disabled}
+        	</if>
+        </where>
+    </select>
+
+    <!-- 查询用户详情 -->
+    <select id="selectMemberById" resultMap="memberResultMap">
+    	<include refid="baseSql"/>
+        where id = #{id}
+    </select>
+    
+    <!-- 查询用户详情 -->
+    <select id="selectMemberByPhonenumber" resultMap="memberResultMap">
+    	<include refid="baseSql"/>
+         where phonenumber = #{phonenumber}
+    </select>
+    
+    <!-- 查询用户详情 -->
+    <select id="selectMemberByOpenid" resultMap="memberResultMap">
+        <include refid="baseSql"/>
+        where openid = #{openid}
+    </select>
+    
+    <!-- 查询用户详情 -->
+    <select id="selectMemberByInvitationCode" resultMap="memberResultMap">
+        <include refid="baseSql"/>
+        where invitation_code = #{invitationCode}
+    </select>
+    
+    <!-- 修改手机号 -->
+    <update id="changePhonenumber">
+        update t_web_member set phonenumber = #{phonenumber} where id = #{id}
+    </update>
+    
+    <!-- 修改手机号 -->
+    <update id="changePassword">
+        update t_web_member set password = #{password} where id = #{id}
+    </update>
+</mapper>

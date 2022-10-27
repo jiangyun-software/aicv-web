@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jiangyun.aicvweb.dao.ProductMapper">
+
+    <resultMap id="productResultMap" type="com.jiangyun.aicvweb.entity.Product">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="point" column="point"/>
+        <result property="url" column="url"/>
+        <result property="key" column="key"/>
+        <result property="remark" column="remark"/>
+        <result property="disabled" column="disabled"/>
+    </resultMap>
+
+    <sql id="baseSql">
+        select id, name, `point`, url, `key`, remark, disabled, create_by, create_time, update_by, update_time from t_web_product 
+    </sql>
+
+    <select id="selectByKey" resultMap="productResultMap">
+    	<include refid="baseSql"/>
+        where `key` = #{key}
+    </select>
+</mapper>
